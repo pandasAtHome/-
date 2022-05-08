@@ -6,6 +6,7 @@
 
 ## Hadoop
 
+- [基础知识](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/README.md)
 - [HDFS 读写流程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/hdfs/%E8%AF%BB%E5%86%99%E6%B5%81%E7%A8%8B.md)
 - [MR执行过程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/mapreduce/%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.md)
 - [Yarn执行流程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/yarn/%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.md)
