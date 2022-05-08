@@ -1,0 +1,108 @@
+# 版本差
+
+| #              | 1.x                          | 2.x                                                          | 3.x  |
+| -------------- | ---------------------------- | ------------------------------------------------------------ | ---- |
+| Block          | 64MB（默认，可改）           | 128MB（默认，可改）                                          |      |
+| NN 数          | 1 个                         | 多个（HA、联邦）                                             |      |
+| 资源调度       | JobTracker                   | ResourceManager                                              |      |
+| 任务调度、监控 | JobTracker                   | ApplicationMaster                                            |      |
+| 执行任务       | TaskTracker                  | NodeManager                                                  |      |
+| 资源容器       | Slot                         | Container                                                    |      |
+| 优缺点         | 缺点：<br />存在单点故障问题 | 优点：<br />1、无单点故障问题：HA<br />2、突破NN内存限制：联邦机制<br />3、引入了 Yarn，分担了 JobTracker 的工作 |      |
+
+
+
+# HDFS
+
+## 小文件问题
+
+### 定义
+
+- 远小于 1个 block 大小的文件
+
+### 危害
+
+| 类型                   | 说明                                   |
+| ---------------------- | -------------------------------------- |
+| 占用过多的 NN 内存空间 |                                        |
+| 浪费磁盘空间           | 1个小文件会占用一个block大小的磁盘空间 |
+| 影响计算速度           | 每个小文件都需要启动 task 处理         |
+
+### 措施
+
+| 方法         | 说明                                                         | 推荐 |
+| ------------ | ------------------------------------------------------------ | ---- |
+| 合并小文件   | 设置任务，定时合并                                           | 是   |
+| HAR File     | 把同类型的小文件打包成一个 HAR 包：<br />优点：<br />1、对 client 无感（所有文件都可见和访问，但 HDFS 中文件数减少了）<br />缺点：<br />1、读取效率有所下降 | 否   |
+| SequenceFile | 合成序列文件：以文件名为key，文件内容为value<br />1、可拆分<br />2、可压缩 | 是   |
+| HBase        | 带索引的 SequenceFile                                        | 是   |
+
+
+
+## NN 的元数据
+
+- `{文件名: block}`：FSImage + EditLogs
+- `{block: datanode}`：DN 启动时，向 NN 汇报
+
+
+
+## 组件
+
+| 名称            | 描述                                                         |
+| --------------- | ------------------------------------------------------------ |
+| NameNode(NN)    | 作用：管理 DFS 的命名空间、结构目录、元数据信息<br />分类：<br />1、Active NN：管理命名空间、维护目录结构、更新元数据信息<br />2、Standby NN：与 ANN 的数据保持一致；ANN 异常时，接管ANN的工作；协助ANN工作，合并 FSImage 和 EditLogs<br />3、Observer NN：与 ANN 数据保持一致，处理 Client 请求 |
+| DataNode(DN)    | 1、存储数据<br />2、定期向 NN 汇报                           |
+| JournalNode(JN) | HA 集群中，用于同步 ANN 和 SNN 的元数据信息                  |
+| ZKFC            | 1、与 NN 一一对应<br />2、监控 NN 状态                       |
+
+
+
+## 数据完整性
+
+- 读写校验和：
+  - 写入：计算校验和
+  - 读取：验证校验和
+- 数据块检测程序：DataBlockScanner
+  - 定期检查数据的完整性
+
+
+
+## [读写流程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/hdfs/%E8%AF%BB%E5%86%99%E6%B5%81%E7%A8%8B.md)
+
+
+
+# MapReduce
+
+## [执行过程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/mapreduce/%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.md)
+
+## 版本差
+
+| 功能     | V1.0        | V2.0              |
+| -------- | ----------- | ----------------- |
+| 资源管理 | JobTracker  | ResourceManager   |
+| 节点管理 | TaskTracker | NodeManager       |
+| 任务调度 | JobTracker  | ApplicationMaster |
+
+
+
+# Yarn
+
+## 组件
+
+| 名称                    | 职责                                                         | 说明                                                         |
+| ----------------------- | ------------------------------------------------------------ | ------------------------------------------------------------ |
+| ResourceManager（RM）   | 1、接收 `JobSubmitter`提交的作业<br />2、监控 NM 的健康情况（通过心跳：NM =》RM）<br />3、调度启动、监控 AM<br />4、资源的分配与调度 |                                                              |
+| NodeManager（NM）       | 1、处理来自 RM 的请求<br />2、处理来自 AM 的请求（启动、停止 Container）<br />3、管理单个节点上的资源（监控 Containers 的资源使用情况，并报告给 RM） |                                                              |
+| ApplicationMaster（AM） | 1、负责数据的切分<br />2、向 RM 申请资源<br />3、向 NM 分配任务（监控、容错） | - 每个 Application 对应一个 AM<br />- 负责一个 Job 生命周期内的所有工作<br />- 每个 Job 都有一个 AM，运行在 RM 以外的机器上<br />- 实质是一个 Container |
+| Container               | 任务的运行资源容器                                           | 内存、CPU、磁盘、网络                                        |
+
+## [执行流程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/yarn/%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.md)
+
+## 容错
+
+| 失败类型 | 说明                                                         |
+| -------- | ------------------------------------------------------------ |
+| 任务     | 向 AM 发送错误报告<br />=》AM 记录日志，通知NM释放Container<br />=》AM 向其他 NM 分配任务，重试（默认：4次） |
+| RM       | 基于 ZK 实现 HA                                              |
+| NM       | 心跳机制（NM - RM）汇报健康<br />=》RM 通知 AM，NM 挂掉了<br />=》AM 将【原NM】上的任务分配给【其他NM】接管 |
+| AM       | 心跳机制（AM - RM）汇报健康<br />=》RM 通知 NM 重新分配 Container，并启动 AM 实例<br />=》AM 从 RMAM 上获取作业状态（避免重复计算之前的任务） |
