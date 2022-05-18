@@ -21,3 +21,7 @@
 
 - [数据处理方法论](https://github.com/pandasAtHome/big-data-note/blob/master/%E5%AE%9E%E6%88%98/hive/%E6%95%B0%E6%8D%AE%E5%A4%84%E7%90%86%E6%96%B9%E6%B3%95%E8%AE%BA.md)
 - [数据倾斜](https://github.com/pandasAtHome/big-data-note/blob/master/%E5%AE%9E%E6%88%98/hive/%E6%95%B0%E6%8D%AE%E5%80%BE%E6%96%9C.md)
+
+## spark
+
+- [调优](https://github.com/pandasAtHome/big-data-note/blob/master/%E5%AE%9E%E6%88%98/spark/%E8%B0%83%E4%BC%98.md)
