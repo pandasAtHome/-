@@ -10,8 +10,6 @@
 | 资源容器       | Slot                         | Container                                                    |      |
 | 优缺点         | 缺点：<br />存在单点故障问题 | 优点：<br />1、无单点故障问题：HA<br />2、突破NN内存限制：联邦机制<br />3、引入了 Yarn，分担了 JobTracker 的工作 |      |
 
-
-
 # HDFS
 
 ## 小文件问题
@@ -37,14 +35,10 @@
 | SequenceFile | 合成序列文件：以文件名为key，文件内容为value<br />1、可拆分<br />2、可压缩 | 是   |
 | HBase        | 带索引的 SequenceFile                                        | 是   |
 
-
-
 ## NN 的元数据
 
 - `{文件名: block}`：FSImage + EditLogs
 - `{block: datanode}`：DN 启动时，向 NN 汇报
-
-
 
 ## 组件
 
@@ -55,8 +49,6 @@
 | JournalNode(JN) | HA 集群中，用于同步 ANN 和 SNN 的元数据信息                  |
 | ZKFC            | 1、与 NN 一一对应<br />2、监控 NN 状态                       |
 
-
-
 ## 数据完整性
 
 - 读写校验和：
@@ -65,15 +57,11 @@
 - 数据块检测程序：DataBlockScanner
   - 定期检查数据的完整性
 
-
-
-## [读写流程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/hdfs/%E8%AF%BB%E5%86%99%E6%B5%81%E7%A8%8B.md)
-
-
+## [读写流程](hdfs/读写流程.md)
 
 # MapReduce
 
-## [执行过程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/mapreduce/%E6%89%A7%E8%A1%8C%E8%BF%87%E7%A8%8B.md)
+## [执行过程](mapreduce/执行过程.md)
 
 ## 版本差
 
@@ -82,8 +70,6 @@
 | 资源管理 | JobTracker  | ResourceManager   |
 | 节点管理 | TaskTracker | NodeManager       |
 | 任务调度 | JobTracker  | ApplicationMaster |
-
-
 
 # Yarn
 
@@ -96,7 +82,7 @@
 | ApplicationMaster（AM） | 1、负责数据的切分<br />2、向 RM 申请资源<br />3、向 NM 分配任务（监控、容错） | - 每个 Application 对应一个 AM<br />- 负责一个 Job 生命周期内的所有工作<br />- 每个 Job 都有一个 AM，运行在 RM 以外的机器上<br />- 实质是一个 Container |
 | Container               | 任务的运行资源容器                                           | 内存、CPU、磁盘、网络                                        |
 
-## [执行流程](https://github.com/pandasAtHome/big-data-note/blob/master/%E7%90%86%E8%AE%BA/hadoop/yarn/%E6%89%A7%E8%A1%8C%E6%B5%81%E7%A8%8B.md)
+## [执行流程](yarn/执行流程.md)
 
 ## 容错
 
